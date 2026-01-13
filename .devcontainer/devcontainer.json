@@ -14,7 +14,8 @@
         "csstools.postcss",
         "ms-vscode.vscode-typescript-next",
         "eamodio.gitlens",
-        "anthropic.claude-code"
+        "anthropic.claude-code",
+        "eamodio.gitlens"
       ],
       "settings": {
         "editor.formatOnSave": true,

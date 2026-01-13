@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 const backgroundImages = [
     '/top1.jpg',
@@ -48,18 +49,21 @@ export default function Home() {
 
                         {/* Navigation */}
                         <nav className="flex items-center gap-8">
-                            <a href="/dabot" className="text-sm font-medium hover:opacity-70 transition-opacity">
+                            <Link href="/dabot" className="text-sm font-medium hover:opacity-70 transition-opacity">
                                 ホーム
-                            </a>
-                            <a href="/dabot/stores" className="text-sm font-medium hover:opacity-70 transition-opacity">
+                            </Link>
+                            <Link href="/dabot/stores" className="text-sm font-medium hover:opacity-70 transition-opacity">
                                 店舗一覧
-                            </a>
-                            <a href="/dabot/brands" className="text-sm font-medium hover:opacity-70 transition-opacity">
+                            </Link>
+                            <Link href="/dabot/brands" className="text-sm font-medium hover:opacity-70 transition-opacity">
                                 ブランド一覧
-                            </a>
-                            <a href="/dabot/about" className="text-sm font-medium hover:opacity-70 transition-opacity">
+                            </Link>
+                            <Link href="/dabot/about" className="text-sm font-medium hover:opacity-70 transition-opacity">
                                 店舗登録について
-                            </a>
+                            </Link>
+                            <Link href="/dabot/mypage" className="text-sm font-medium hover:opacity-70 transition-opacity">
+                                マイページ
+                            </Link>
                         </nav>
                     </div>
                 </div>
@@ -143,38 +147,40 @@ export default function Home() {
 
                     {/* Brand Grid */}
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
-                        {brands.map((brand) => (
-                            <a
-                                key={brand.name}
-                                href={`/dabot/brands/${brand.name.toLowerCase()}`}
-                                className="group relative aspect-square overflow-hidden bg-gray-100 hover:shadow-2xl transition-shadow duration-300"
-                            >
-                                {/* Brand Image */}
-                                <div
-                                    className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
-                                    style={{
-                                        backgroundImage: `url(${brand.image})`,
-                                    }}
-                                />
-
-                                {/* Overlay with Brand Name */}
-                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                                    <h4 className="text-white text-2xl font-black italic tracking-tight">
+                        {brands.map((brand, index) => {
+                            const colors = [
+                                'from-slate-900 to-slate-700',
+                                'from-zinc-900 to-zinc-700',
+                                'from-neutral-900 to-neutral-700',
+                                'from-gray-900 to-gray-700',
+                                'from-stone-900 to-stone-700',
+                                'from-slate-800 to-slate-600',
+                                'from-zinc-800 to-zinc-600',
+                                'from-neutral-800 to-neutral-600',
+                            ];
+                            return (
+                                <Link
+                                    key={brand.name}
+                                    href={`/dabot/brands/${brand.name.toLowerCase()}`}
+                                    className={`group relative aspect-square overflow-hidden bg-gradient-to-br ${colors[index % colors.length]} hover:shadow-2xl transition-all duration-500 flex items-center justify-center border border-gray-800 hover:border-gray-600`}
+                                >
+                                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-500"></div>
+                                    <h4 className="relative text-white text-3xl font-black italic tracking-tight text-center px-4 group-hover:scale-110 group-hover:tracking-wide transition-all duration-500">
                                         {brand.name}
                                     </h4>
-                                </div>
-                            </a>
-                        ))}
+                                </Link>
+                            );
+                        })}
                     </div>
 
                     {/* View All Link */}
                     <div className="text-center mt-12">
-                        <a
+                        <Link
                             href="/dabot/brands"
                             className="inline-block px-8 py-4 bg-black text-white font-medium hover:bg-gray-800 transition-colors"
                         >
                             すべてのブランドを見る
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </section>

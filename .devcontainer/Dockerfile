@@ -9,5 +9,7 @@ WORKDIR /workspaces/davot
 # 必要なら git
 RUN apt-get update && apt-get install -y git && apt-get clean
 
+RUN apk add --no-cache aws-cli
+
 # タイムゾーンを設定
 ENV TZ=Asia/Tokyo

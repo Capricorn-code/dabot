@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import Link from 'next/link';
 
 const brands = [
     { name: 'BUTTER', nameJa: 'バター', image: '/brands/butter.jpg', description: 'NYC発のスケートブランド' },
@@ -41,24 +42,27 @@ export default function BrandsPage() {
                 <div className="container mx-auto px-6 py-6">
                     <div className="flex items-center justify-between">
                         {/* Logo */}
-                        <a href="/dabot" className="text-4xl font-black italic tracking-tight hover:opacity-70 transition-opacity">
+                        <Link href="/dabot" className="text-4xl font-black italic tracking-tight hover:opacity-70 transition-opacity">
                             DABOT
-                        </a>
+                        </Link>
 
                         {/* Navigation */}
                         <nav className="flex items-center gap-8">
-                            <a href="/dabot" className="text-sm font-medium hover:opacity-70 transition-opacity">
+                            <Link href="/dabot" className="text-sm font-medium hover:opacity-70 transition-opacity">
                                 ホーム
-                            </a>
-                            <a href="/dabot/stores" className="text-sm font-medium hover:opacity-70 transition-opacity">
+                            </Link>
+                            <Link href="/dabot/stores" className="text-sm font-medium hover:opacity-70 transition-opacity">
                                 店舗一覧
-                            </a>
-                            <a href="/ポートabot/brands" className="text-sm font-medium border-b-2 border-black">
+                            </Link>
+                            <Link href="/dabot/brands" className="text-sm font-medium border-b-2 border-black">
                                 ブランド一覧
-                            </a>
-                            <a href="/dabot/about" className="text-sm font-medium hover:opacity-70 transition-opacity">
+                            </Link>
+                            <Link href="/dabot/about" className="text-sm font-medium hover:opacity-70 transition-opacity">
                                 店舗登録について
-                            </a>
+                            </Link>
+                            <Link href="/dabot/mypage" className="text-sm font-medium hover:opacity-70 transition-opacity">
+                                マイページ
+                            </Link>
                         </nav>
                     </div>
                 </div>
@@ -123,7 +127,7 @@ export default function BrandsPage() {
                     {/* Brand List */}
                     <div className="space-y-4">
                         {sortedBrands.map((brand, index) => (
-                            <a
+                            <Link
                                 key={brand.name}
                                 href={`/dabot/brands/${brand.name.toLowerCase()}`}
                                 className="group block"
@@ -131,20 +135,22 @@ export default function BrandsPage() {
                                     animation: `fadeIn 0.5s ease-out ${index * 0.05}s both`
                                 }}
                             >
-                                <div className="flex items-center gap-6 p-4 bg-white border-2 border-gray-200 hover:border-black hover:shadow-lg transition-all duration-300">
-                                    {/* Brand Image */}
-                                    <div className="relative w-32 h-32 flex-shrink-0 overflow-hidden bg-gray-100">
-                                        <div
-                                            className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
-                                            style={{
-                                                backgroundImage: `url(${brand.image})`,
-                                            }}
-                                        />
+                                <div className="flex items-center gap-6 p-6 bg-gradient-to-r from-white to-gray-50 border-2 border-gray-200 hover:border-gray-400 hover:shadow-xl transition-all duration-500">
+                                    {/* Brand Icon/Text */}
+                                    <div className={`relative w-32 h-32 flex-shrink-0 bg-gradient-to-br ${
+                                        index % 4 === 0 ? 'from-slate-900 to-slate-700' :
+                                        index % 4 === 1 ? 'from-zinc-900 to-zinc-700' :
+                                        index % 4 === 2 ? 'from-neutral-900 to-neutral-700' :
+                                        'from-gray-900 to-gray-700'
+                                    } flex items-center justify-center group-hover:scale-105 transition-transform duration-500 border border-gray-800`}>
+                                        <span className="text-white text-2xl font-black italic tracking-tight text-center px-2 break-words">
+                                            {brand.name}
+                                        </span>
                                     </div>
 
                                     {/* Brand Info */}
                                     <div className="flex-1 min-w-0">
-                                        <h2 className="text-3xl font-black italic tracking-tight mb-2 group-hover:translate-x-2 transition-transform duration-300">
+                                        <h2 className="text-3xl font-black italic tracking-tight mb-2 group-hover:translate-x-2 group-hover:text-gray-900 transition-all duration-300">
                                             {brand.name}
                                         </h2>
                                         <p className="text-sm text-gray-600 mb-1">{brand.nameJa}</p>
@@ -171,7 +177,7 @@ export default function BrandsPage() {
                                         </svg>
                                     </div>
                                 </div>
-                            </a>
+                            </Link>
                         ))}
                     </div>
                 </div>

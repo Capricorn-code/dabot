@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { use } from 'react';
 
@@ -113,13 +114,13 @@ export default function BrandDetailPage({ params }: { params: Promise<{ id: stri
                             <a href="/dabot" className="text-sm font-medium hover:opacity-70 transition-opacity">
                                 ホーム
                             </a>
-                            <a href="/davot/stores" className="text-sm font-medium hover:opacity-70 transition-opacity">
+                            <a href="/dabot/stores" className="text-sm font-medium hover:opacity-70 transition-opacity">
                                 店舗一覧
                             </a>
-                            <a href="/dabot/brands" className="text-sm font-medium hover:opacity-70 transition-opacity">
+                            <Link href="/dabot/brands" className="text-sm font-medium hover:opacity-70 transition-opacity">
                                 ブランド一覧
-                            </a>
-                            <a href="/davot/about" className="text-sm font-medium hover:opacity-70 transition-opacity">
+                            </Link>
+                            <a href="/dabot/about" className="text-sm font-medium hover:opacity-70 transition-opacity">
                                 店舗登録について
                             </a>
                         </nav>
@@ -134,7 +135,7 @@ export default function BrandDetailPage({ params }: { params: Promise<{ id: stri
                     <div className="mb-8 flex items-center gap-2 text-sm text-gray-600">
                         <a href="/dabot" className="hover:text-black transition-colors">ホーム</a>
                         <span>/</span>
-                        <a href="/dabot/brands" className="hover:text-black transition-colors">ブランド一覧</a>
+                        <Link href="/dabot/brands" className="hover:text-black transition-colors">ブランド一覧</Link>
                         <span>/</span>
                         <span className="text-black font-medium">{brand.name}</span>
                     </div>
@@ -204,7 +205,7 @@ export default function BrandDetailPage({ params }: { params: Promise<{ id: stri
 
                     {/* Back to List */}
                     <div className="mt-16 text-center">
-                        <a
+                        <Link
                             href="/dabot/brands"
                             className="inline-flex items-center gap-2 text-sm font-medium hover:opacity-70 transition-opacity"
                         >
@@ -224,7 +225,7 @@ export default function BrandDetailPage({ params }: { params: Promise<{ id: stri
                                 />
                             </svg>
                             ブランド一覧に戻る
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </main>

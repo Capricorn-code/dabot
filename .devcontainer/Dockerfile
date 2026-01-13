@@ -9,7 +9,8 @@ WORKDIR /workspaces/davot
 # 必要なら git
 RUN apt-get update && apt-get install -y git && apt-get clean
 
-RUN apk add --no-cache aws-cli
+# AWS CLI をインストール
+RUN apt-get update && apt-get install -y awscli && apt-get clean
 
 # タイムゾーンを設定
 ENV TZ=Asia/Tokyo

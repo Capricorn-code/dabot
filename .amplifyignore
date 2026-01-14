@@ -1,0 +1,41 @@
+# Amplify build ignore file
+# Files and directories listed here will not be included in the build
+
+# Documentation
+doc/
+*.md
+!README.md
+
+# Development files
+.devcontainer/
+.vscode/
+.git/
+.gitignore
+
+# Lock files (except pnpm)
+package-lock.json
+yarn.lock
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.idea/
+*.swp
+*.swo
+*~
+
+# Test files
+__tests__/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+coverage/

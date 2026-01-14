@@ -48,5 +48,7 @@
   "workspaceFolder": "/workspaces/davot",
   "postCreateCommand": "pnpm install",
   "remoteUser": "root",
-  "mounts": ["source=davot-aws-config,target=/root/.aws,type=volume"]
+  "mounts": [
+    "source=davot-aws-config,target=/root/.aws,type=volume"
+  ]
 }

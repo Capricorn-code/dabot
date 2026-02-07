@@ -49,6 +49,6 @@
   "postCreateCommand": "pnpm install",
   "remoteUser": "root",
   "mounts": [
-    "source=davot-aws-config,target=/root/.aws,type=volume"
+    "source=${localEnv:HOME}/.aws,target=/root/.aws,type=bind,consistency=cached"
   ]
 }

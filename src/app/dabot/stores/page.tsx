@@ -4,21 +4,25 @@ import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
-// 店舗データの型定義
+// 店舗データの型定義（DynamoDB Storesテーブルに基づく）
 type Store = {
     id: string;
     name: string;
-    nameJa: string;
-    area: string;
-    prefecture: string;
-    city: string;
     address: string;
-    brands: string[];
-    description: string;
-    openYear?: number | null;
+    area: string;
+    lat: number;
+    long: number;
+    is_open_now: boolean;
+    phone_number?: string | null;
+    brand_number: number;
+    display_brand_ids: string[];
+    review_count?: number | null;
+    description?: string | null;
+    site_url?: string | null;
+    business_hours?: string | null;
 };
 
-type SortOption = 'name-asc' | 'name-desc' | 'area' | 'brands-desc' | 'year-desc';
+type SortOption = 'name-asc' | 'name-desc' | 'area' | 'brands-desc' | 'review-desc';
 
 export default function StoresPage() {
     const searchParams = useSearchParams();
@@ -71,11 +75,10 @@ export default function StoresPage() {
             filtered = filtered.filter((store) => {
                 return (
                     store.name?.toLowerCase().includes(lowerKeyword) ||
-                    store.nameJa?.toLowerCase().includes(lowerKeyword) ||
-                    store.prefecture?.toLowerCase().includes(lowerKeyword) ||
-                    store.city?.toLowerCase().includes(lowerKeyword) ||
                     store.address?.toLowerCase().includes(lowerKeyword) ||
-                    store.description?.toLowerCase().includes(lowerKeyword)
+                    store.area?.toLowerCase().includes(lowerKeyword) ||
+                    store.description?.toLowerCase().includes(lowerKeyword) ||
+                    store.phone_number?.toLowerCase().includes(lowerKeyword)
                 );
             });
         }
@@ -97,9 +100,9 @@ export default function StoresPage() {
                     return a.name.localeCompare(b.name);
                 });
             case 'brands-desc':
-                return filtered.sort((a, b) => (b.brands?.length || 0) - (a.brands?.length || 0));
-            case 'year-desc':
-                return filtered.sort((a, b) => (b.openYear || 0) - (a.openYear || 0));
+                return filtered.sort((a, b) => b.brand_number - a.brand_number);
+            case 'review-desc':
+                return filtered.sort((a, b) => (b.review_count || 0) - (a.review_count || 0));
             default:
                 return filtered;
         }
@@ -224,13 +227,13 @@ export default function StoresPage() {
                                     取扱ブランド数
                                 </button>
                                 <button
-                                    onClick={() => setSortOption('year-desc')}
-                                    className={`px-4 py-2 text-sm font-medium transition-colors ${sortOption === 'year-desc'
+                                    onClick={() => setSortOption('review-desc')}
+                                    className={`px-4 py-2 text-sm font-medium transition-colors ${sortOption === 'review-desc'
                                             ? 'bg-black text-white'
                                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                         }`}
                                 >
-                                    創業年順
+                                    レビュー数順
                                 </button>
                             </div>
                         </div>
@@ -270,7 +273,11 @@ export default function StoresPage() {
                                                     <h2 className="text-3xl font-black italic tracking-tight group-hover:translate-x-2 group-hover:text-gray-900 transition-all duration-300">
                                                         {store.name}
                                                     </h2>
-                                                    <span className="text-sm text-gray-600">{store.nameJa}</span>
+                                                    {store.is_open_now && (
+                                                        <span className="text-xs px-2 py-1 bg-green-100 text-green-700 font-medium rounded">
+                                                            営業中
+                                                        </span>
+                                                    )}
                                                 </div>
                                                 <div className="flex items-center gap-4 text-sm text-gray-600">
                                                     <span className="flex items-center gap-1">
@@ -278,11 +285,14 @@ export default function StoresPage() {
                                                             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
                                                             <circle cx="12" cy="10" r="3" />
                                                         </svg>
-                                                        {store.prefecture} {store.city}
+                                                        {store.area}
                                                     </span>
-                                                    {store.openYear && (
-                                                        <span className="text-gray-500">
-                                                            創業 {store.openYear}年
+                                                    {store.phone_number && (
+                                                        <span className="flex items-center gap-1 text-gray-500">
+                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                                                            </svg>
+                                                            {store.phone_number}
                                                         </span>
                                                     )}
                                                 </div>
@@ -291,37 +301,52 @@ export default function StoresPage() {
                                             {/* Area Badge */}
                                             <div className="flex-shrink-0 ml-4">
                                                 <span className="inline-block px-3 py-1 bg-black text-white text-xs font-medium">
-                                                    {store.area}
+                                                    {store.brand_number}ブランド
                                                 </span>
                                             </div>
                                         </div>
 
                                         {/* Description */}
-                                        <p className="text-sm text-gray-600 mb-4">
-                                            {store.description}
-                                        </p>
+                                        {store.description && (
+                                            <p className="text-sm text-gray-600 mb-4">
+                                                {store.description}
+                                            </p>
+                                        )}
 
                                         {/* Address */}
                                         <p className="text-xs text-gray-500 mb-4">
                                             📍 {store.address}
                                         </p>
 
-                                        {/* Brands */}
-                                        {store.brands && store.brands.length > 0 && (
-                                            <div className="flex items-center gap-2 flex-wrap">
-                                                <span className="text-xs font-medium text-gray-700">
-                                                    取扱ブランド:
+                                        {/* Info Row */}
+                                        <div className="flex items-center gap-4 text-xs text-gray-500">
+                                            {store.review_count !== null && store.review_count !== undefined && (
+                                                <span className="flex items-center gap-1">
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                                    </svg>
+                                                    {store.review_count} レビュー
                                                 </span>
-                                                {store.brands.map(brand => (
-                                                    <span
-                                                        key={brand}
-                                                        className="inline-block px-2 py-1 bg-gray-100 text-xs font-medium text-gray-700 group-hover:bg-gray-200 transition-colors"
-                                                    >
-                                                        {brand}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        )}
+                                            )}
+                                            {store.business_hours && (
+                                                <span className="flex items-center gap-1">
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                        <circle cx="12" cy="12" r="10" />
+                                                        <polyline points="12 6 12 12 16 14" />
+                                                    </svg>
+                                                    {store.business_hours}
+                                                </span>
+                                            )}
+                                            {store.site_url && (
+                                                <span className="flex items-center gap-1">
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                                                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                                                    </svg>
+                                                    サイトあり
+                                                </span>
+                                            )}
+                                        </div>
 
                                         {/* Arrow Icon */}
                                         <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">

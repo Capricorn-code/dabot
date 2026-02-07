@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const backgroundImages = [
     '/top1.jpg',
@@ -23,7 +24,9 @@ const brands = [
 ];
 
 export default function Home() {
+    const router = useRouter();
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [keyword, setKeyword] = useState('');
 
     useEffect(() => {
         // 5秒ごとに画像を切り替え
@@ -37,6 +40,19 @@ export default function Home() {
 
         return () => clearInterval(interval);
     }, [currentImageIndex]);
+
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (keyword.trim()) {
+            router.push(`/dabot/stores?keyword=${encodeURIComponent(keyword)}`);
+        } else {
+            router.push('/dabot/stores');
+        }
+    };
+
+    const handleAreaSearch = () => {
+        router.push('/dabot/stores');
+    };
 
     return (
         <div className="min-h-screen bg-white">
@@ -102,24 +118,33 @@ export default function Home() {
                     </h2>
 
                     {/* Search Section */}
-                    <div className="space-y-4">
+                    <form onSubmit={handleSearch} className="space-y-4">
                         {/* Keyword Search */}
                         <div className="flex gap-2">
                             <input
                                 type="text"
                                 placeholder="キーワードを入力"
+                                value={keyword}
+                                onChange={(e) => setKeyword(e.target.value)}
                                 className="flex-1 px-6 py-4 bg-white border-2 border-gray-300 rounded-none focus:outline-none focus:border-black transition-colors"
                             />
-                            <button className="px-8 py-4 bg-black text-white font-medium hover:bg-gray-800 transition-colors">
+                            <button
+                                type="submit"
+                                className="px-8 py-4 bg-black text-white font-medium hover:bg-gray-800 transition-colors"
+                            >
                                 検索
                             </button>
                         </div>
 
                         {/* Area Search Button */}
-                        <button className="w-full px-6 py-4 bg-black text-white font-medium hover:bg-gray-800 transition-colors">
+                        <button
+                            type="button"
+                            onClick={handleAreaSearch}
+                            className="w-full px-6 py-4 bg-black text-white font-medium hover:bg-gray-800 transition-colors"
+                        >
                             エリアから検索
                         </button>
-                    </div>
+                    </form>
                 </div>
 
                 {/* Decorative Icon/Element - Skateboard/Ramp illustration */}

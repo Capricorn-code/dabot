@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@aws-amplify/adapter-nextjs": "^1.7.1",
     "@radix-ui/react-slot": "^1.2.4",
     "autoprefixer": "^10.4.23",
     "aws-amplify": "^6.15.9",

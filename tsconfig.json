@@ -19,7 +19,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./src/*"],
+      "@/amplify_outputs.json": ["./amplify_outputs.json"],
+      "@/amplify/*": ["./amplify/*"]
     }
   },
   "include": [
@@ -28,7 +30,9 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
-    "**/*.mts"
+    "**/*.mts",
+    "amplify_outputs.json",
+    "amplify/**/*"
   ],
   "exclude": ["node_modules"]
 }

@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     });
 
     // ベースクエリ: すべての店舗を取得
-    let { data: stores, errors } = await client.models.Store.list();
+    const { data: stores, errors } = await client.models.Stores.list();
 
     if (errors) {
       console.error('Error fetching stores:', errors);
@@ -47,10 +47,8 @@ export async function POST(request: Request) {
       filteredStores = filteredStores.filter((store) => {
         return (
           store.name?.toLowerCase().includes(lowerKeyword) ||
-          store.nameJa?.toLowerCase().includes(lowerKeyword) ||
-          store.prefecture?.toLowerCase().includes(lowerKeyword) ||
-          store.city?.toLowerCase().includes(lowerKeyword) ||
           store.address?.toLowerCase().includes(lowerKeyword) ||
+          store.area?.toLowerCase().includes(lowerKeyword) ||
           store.description?.toLowerCase().includes(lowerKeyword)
         );
       });
@@ -61,20 +59,20 @@ export async function POST(request: Request) {
       filteredStores = filteredStores.filter((store) => store.area === area);
     }
 
-    // 都道府県フィルター
-    if (prefecture) {
-      filteredStores = filteredStores.filter(
-        (store) => store.prefecture === prefecture
-      );
-    }
+    // // 都道府県フィルター
+    // if (prefecture) {
+    //   filteredStores = filteredStores.filter(
+    //     (store) => store.prefecture === prefecture
+    //   );
+    // }
 
-    // ブランドフィルター
-    if (brands && brands.length > 0) {
-      filteredStores = filteredStores.filter((store) => {
-        if (!store.brands) return false;
-        return brands.some((brand) => store.brands?.includes(brand));
-      });
-    }
+    // // ブランドフィルター
+    // if (brands && brands.length > 0) {
+    //   filteredStores = filteredStores.filter((store) => {
+    //     if (!store.brands) return false;
+    //     return brands.some((brand) => store.brands?.includes(brand));
+    //   });
+    // }
 
     return NextResponse.json({ stores: filteredStores });
   } catch (error) {

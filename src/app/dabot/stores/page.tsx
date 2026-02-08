@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
@@ -25,6 +25,22 @@ type Store = {
 type SortOption = 'name-asc' | 'name-desc' | 'area' | 'brands-desc' | 'review-desc';
 
 export default function StoresPage() {
+    return (
+        <Suspense fallback={<StoresPageLoading />}>
+            <StoresPageContent />
+        </Suspense>
+    );
+}
+
+function StoresPageLoading() {
+    return (
+        <div className="min-h-screen bg-white flex items-center justify-center">
+            <p className="text-gray-500 text-lg">読み込み中...</p>
+        </div>
+    );
+}
+
+function StoresPageContent() {
     const searchParams = useSearchParams();
     const keywordParam = searchParams.get('keyword') || '';
 

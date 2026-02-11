@@ -13,7 +13,7 @@ frontend:
         - export NODE_OPTIONS=--max-old-space-size=3072
         - export NEXT_PRIVATE_MAX_WORKER_THREADS=1
         - export NEXT_TELEMETRY_DISABLED=1
-        - pnpm run build -- --no-turbopack
+        - pnpm run build
   artifacts:
     baseDirectory: .next
     files:

@@ -120,8 +120,8 @@ export default function BrandDetailPage({ params }: { params: Promise<{ id: stri
                             <Link href="/dabot/brands" className="text-sm font-medium hover:opacity-70 transition-opacity">
                                 ブランド一覧
                             </Link>
-                            <a href="/dabot/about" className="text-sm font-medium hover:opacity-70 transition-opacity">
-                                店舗登録について
+                            <a href="/dabot/stores/new" className="text-sm font-medium hover:opacity-70 transition-opacity">
+                                店舗登録はこちら
                             </a>
                         </nav>
                     </div>

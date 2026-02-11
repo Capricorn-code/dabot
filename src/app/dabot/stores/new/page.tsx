@@ -135,8 +135,8 @@ export default function NewStorePage() {
                             <Link href="/dabot/brands" className="text-sm font-medium hover:opacity-70 transition-opacity">
                                 ブランド一覧
                             </Link>
-                            <Link href="/dabot/about" className="text-sm font-medium hover:opacity-70 transition-opacity">
-                                店舗登録について
+                            <Link href="/dabot/stores/new" className="text-sm font-medium border-b-2 border-black">
+                                店舗登録はこちら
                             </Link>
                             <Link href="/dabot/mypage" className="text-sm font-medium hover:opacity-70 transition-opacity">
                                 マイページ

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -13,6 +14,7 @@ const navItems = [
 
 export function Header() {
     const pathname = usePathname();
+    const [menuOpen, setMenuOpen] = useState(false);
 
     const isActive = (item: typeof navItems[number]) => {
         if (item.href === '/dabot') return pathname === '/dabot';
@@ -21,30 +23,84 @@ export function Header() {
     };
 
     return (
-        <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
-            <div className="container mx-auto px-6 py-6">
-                <div className="flex items-center justify-between">
-                    <Link href="/dabot" className="text-4xl font-black italic tracking-tight hover:opacity-70 transition-opacity">
-                        DABOT
-                    </Link>
+        <>
+            <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
+                <div className="container mx-auto px-6 py-4 md:py-6">
+                    <div className="flex items-center justify-between">
+                        <Link
+                            href="/dabot"
+                            className="text-3xl md:text-4xl font-black italic tracking-tight hover:opacity-70 transition-opacity"
+                            onClick={() => setMenuOpen(false)}
+                        >
+                            DABOT
+                        </Link>
 
-                    <nav className="flex items-center gap-8">
-                        {navItems.map((item) => (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                className={
-                                    isActive(item)
-                                        ? 'text-sm font-medium border-b-2 border-black'
-                                        : 'text-sm font-medium hover:opacity-70 transition-opacity'
-                                }
-                            >
-                                {item.label}
-                            </Link>
-                        ))}
-                    </nav>
+                        {/* Desktop nav */}
+                        <nav className="hidden md:flex items-center gap-8">
+                            {navItems.map((item) => (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    className={
+                                        isActive(item)
+                                            ? 'text-sm font-medium border-b-2 border-black'
+                                            : 'text-sm font-medium hover:opacity-70 transition-opacity'
+                                    }
+                                >
+                                    {item.label}
+                                </Link>
+                            ))}
+                        </nav>
+
+                        {/* Hamburger button (mobile only) */}
+                        <button
+                            className="md:hidden flex flex-col justify-center items-center w-8 h-8 gap-1.5"
+                            onClick={() => setMenuOpen((prev) => !prev)}
+                            aria-label="メニュー"
+                        >
+                            <span
+                                className={`block w-6 h-0.5 bg-black transition-all duration-300 origin-center ${
+                                    menuOpen ? 'rotate-45 translate-y-2' : ''
+                                }`}
+                            />
+                            <span
+                                className={`block w-6 h-0.5 bg-black transition-all duration-300 ${
+                                    menuOpen ? 'opacity-0' : ''
+                                }`}
+                            />
+                            <span
+                                className={`block w-6 h-0.5 bg-black transition-all duration-300 origin-center ${
+                                    menuOpen ? '-rotate-45 -translate-y-2' : ''
+                                }`}
+                            />
+                        </button>
+                    </div>
                 </div>
+            </header>
+
+            {/* Mobile menu overlay */}
+            <div
+                className={`fixed inset-0 z-40 bg-white transition-opacity duration-300 md:hidden ${
+                    menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+                }`}
+            >
+                <nav className="flex flex-col px-10 gap-8 pt-24">
+                    {navItems.map((item) => (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            onClick={() => setMenuOpen(false)}
+                            className={`text-2xl font-black italic tracking-tight transition-opacity ${
+                                isActive(item)
+                                    ? 'text-black border-b-2 border-black pb-1 w-fit'
+                                    : 'text-gray-400 hover:text-black'
+                            }`}
+                        >
+                            {item.label}
+                        </Link>
+                    ))}
+                </nav>
             </div>
-        </header>
+        </>
     );
 }

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { Header } from '@/components/Header';
 
 // サンプルデータ - 実際にはAPIやローカルストレージから取得
 const favoriteStores = [
@@ -59,36 +60,7 @@ export default function MyPage() {
 
     return (
         <div className="min-h-screen bg-white">
-            {/* Header */}
-            <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
-                <div className="container mx-auto px-6 py-6">
-                    <div className="flex items-center justify-between">
-                        {/* Logo */}
-                        <Link href="/dabot" className="text-4xl font-black italic tracking-tight hover:opacity-70 transition-opacity">
-                            DABOT
-                        </Link>
-
-                        {/* Navigation */}
-                        <nav className="flex items-center gap-8">
-                            <Link href="/dabot" className="text-sm font-medium hover:opacity-70 transition-opacity">
-                                ホーム
-                            </Link>
-                            <Link href="/dabot/stores" className="text-sm font-medium hover:opacity-70 transition-opacity">
-                                店舗一覧
-                            </Link>
-                            <Link href="/dabot/brands" className="text-sm font-medium hover:opacity-70 transition-opacity">
-                                ブランド一覧
-                            </Link>
-                            <Link href="/dabot/stores/new" className="text-sm font-medium hover:opacity-70 transition-opacity">
-                                店舗登録はこちら
-                            </Link>
-                            <Link href="/dabot/mypage" className="text-sm font-medium border-b-2 border-black">
-                                マイページ
-                            </Link>
-                        </nav>
-                    </div>
-                </div>
-            </header>
+            <Header />
 
             {/* Main Content */}
             <main className="pt-32 pb-20 px-6">

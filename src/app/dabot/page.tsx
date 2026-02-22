@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Header } from '@/components/Header';
+import type { Schema } from '@/amplify/data/resource';
 
 const backgroundImages = [
     '/top1.jpg',
@@ -12,21 +14,13 @@ const backgroundImages = [
     '/top5.jpg',
 ];
 
-const brands = [
-    { name: 'BUTTER', image: '/brands/butter.jpg' },
-    { name: 'DIME', image: '/brands/dime.jpg' },
-    { name: 'EVISEN', image: '/brands/evisen.jpg' },
-    { name: 'FTC', image: '/brands/ftc_3.jpg' },
-    { name: 'OBEY', image: '/brands/obey.jpg' },
-    { name: 'POLAR', image: '/brands/polar.jpg' },
-    { name: 'SNACKS', image: '/brands/snacks.jpg' },
-    { name: 'YARDSALE', image: '/brands/yardsale.jpg' },
-];
+type Brand = Schema['Brands']['type'];
 
 export default function Home() {
     const router = useRouter();
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [keyword, setKeyword] = useState('');
+    const [brands, setBrands] = useState<Brand[]>([]);
 
     useEffect(() => {
         // 5秒ごとに画像を切り替え
@@ -40,6 +34,21 @@ export default function Home() {
 
         return () => clearInterval(interval);
     }, [currentImageIndex]);
+
+    useEffect(() => {
+        const fetchBrands = async () => {
+            try {
+                const response = await fetch('/api/brands');
+                if (!response.ok) return;
+                const data = await response.json();
+                setBrands(data.brands || []);
+            } catch (err) {
+                console.error('Error fetching brands:', err);
+            }
+        };
+
+        fetchBrands();
+    }, []);
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
@@ -56,34 +65,7 @@ export default function Home() {
 
     return (
         <div className="min-h-screen bg-white">
-            {/* Header */}
-            <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm">
-                <div className="container mx-auto px-6 py-6">
-                    <div className="flex items-center justify-between">
-                        {/* Logo */}
-                        <h1 className="text-4xl font-black italic tracking-tight">DABOT</h1>
-
-                        {/* Navigation */}
-                        <nav className="flex items-center gap-8">
-                            <Link href="/dabot" className="text-sm font-medium hover:opacity-70 transition-opacity">
-                                ホーム
-                            </Link>
-                            <Link href="/dabot/stores" className="text-sm font-medium hover:opacity-70 transition-opacity">
-                                店舗一覧
-                            </Link>
-                            <Link href="/dabot/brands" className="text-sm font-medium hover:opacity-70 transition-opacity">
-                                ブランド一覧
-                            </Link>
-                            <Link href="/dabot/stores/new" className="text-sm font-medium hover:opacity-70 transition-opacity">
-                                店舗登録はこちら
-                            </Link>
-                            <Link href="/dabot/mypage" className="text-sm font-medium hover:opacity-70 transition-opacity">
-                                マイページ
-                            </Link>
-                        </nav>
-                    </div>
-                </div>
-            </header>
+            <Header />
 
             {/* Hero Section */}
             <main className="relative min-h-screen flex items-center justify-center">
@@ -185,8 +167,8 @@ export default function Home() {
                             ];
                             return (
                                 <Link
-                                    key={brand.name}
-                                    href={`/dabot/brands/${brand.name.toLowerCase()}`}
+                                    key={brand.id}
+                                    href={`/dabot/brands/${brand.id}`}
                                     className={`group relative aspect-square overflow-hidden bg-gradient-to-br ${colors[index % colors.length]} hover:shadow-2xl transition-all duration-500 flex items-center justify-center border border-gray-800 hover:border-gray-600`}
                                 >
                                     <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-500"></div>

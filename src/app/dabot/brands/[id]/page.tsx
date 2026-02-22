@@ -1,132 +1,80 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
 import { use } from 'react';
+import { Header } from '@/components/Header';
+import type { Schema } from '@/amplify/data/resource';
 
-const brandsData = {
-    butter: {
-        name: 'BUTTER',
-        nameJa: 'バター',
-        image: '/brands/butter.jpg',
-        description: 'NYC発のスケートブランド',
-        longDescription: 'BUTTER GOODSは、ニューヨーク発のスケートブランド。ストリートカルチャーとスケートボードの融合から生まれた独自のスタイルが特徴です。',
-        established: '1994',
-        origin: 'New York, USA',
-        category: 'Skateboard / Streetwear',
-    },
-    dime: {
-        name: 'DIME',
-        nameJa: 'ダイム',
-        image: '/brands/dime.jpg',
-        description: 'カナダ・モントリオール発',
-        longDescription: 'DIMEは、カナダ・モントリオール発のスケートブランド。ユニークなデザインとユーモアのあるアプローチで知られています。',
-        established: '2005',
-        origin: 'Montreal, Canada',
-        category: 'Skateboard / Streetwear',
-    },
-    evisen: {
-        name: 'EVISEN',
-        nameJa: 'エビセン',
-        image: '/brands/evisen.jpg',
-        description: '日本発スケートブランド',
-        longDescription: 'EVISENは、日本発のスケートブランド。日本のストリートカルチャーとスケートボードシーンを代表するブランドの一つです。',
-        established: '2011',
-        origin: 'Tokyo, Japan',
-        category: 'Skateboard / Streetwear',
-    },
-    ftc: {
-        name: 'FTC',
-        nameJa: 'エフティーシー',
-        image: '/brands/ftc_3.jpg',
-        description: 'サンフランシスコの老舗',
-        longDescription: 'FTC（For The City）は、サンフランシスコを拠点とする老舗スケートショップ＆ブランド。西海岸スケートカルチャーの中心的存在です。',
-        established: '1986',
-        origin: 'San Francisco, USA',
-        category: 'Skateboard / Streetwear',
-    },
-    obey: {
-        name: 'OBEY',
-        nameJa: 'オベイ',
-        image: '/brands/obey.jpg',
-        description: 'ストリートアートブランド',
-        longDescription: 'OBEYは、ストリートアーティストShepard Faireyによって設立されたブランド。アートとストリートカルチャーを融合させたユニークなデザインが特徴です。',
-        established: '2001',
-        origin: 'Los Angeles, USA',
-        category: 'Streetwear / Art',
-    },
-    polar: {
-        name: 'POLAR',
-        nameJa: 'ポーラー',
-        image: '/brands/polar.jpg',
-        description: 'スウェーデン発',
-        longDescription: 'POLAR SKATE CO.は、スウェーデン発のスケートブランド。北欧らしいミニマルなデザインと高品質な製品で知られています。',
-        established: '2011',
-        origin: 'Malmö, Sweden',
-        category: 'Skateboard / Streetwear',
-    },
-    snacks: {
-        name: 'SNACKS',
-        nameJa: 'スナックス',
-        image: '/brands/snacks.jpg',
-        description: 'NY発スケートブランド',
-        longDescription: 'SNACKSは、ニューヨーク発のスケートブランド。遊び心のあるデザインとストリート感覚が魅力です。',
-        established: '2015',
-        origin: 'New York, USA',
-        category: 'Skateboard / Streetwear',
-    },
-    yardsale: {
-        name: 'YARDSALE',
-        nameJa: 'ヤードセール',
-        image: '/brands/yardsale.jpg',
-        description: 'ロンドン発',
-        longDescription: 'YARDSALEは、ロンドン発のスケートブランド。イギリスのストリートカルチャーを体現したユニークなスタイルが特徴です。',
-        established: '2013',
-        origin: 'London, UK',
-        category: 'Skateboard / Streetwear',
-    },
-};
-
-type BrandId = keyof typeof brandsData;
+type Brand = Schema['Brands']['type'];
 
 export default function BrandDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const resolvedParams = use(params);
-    const brandId = resolvedParams.id.toLowerCase() as BrandId;
-    const brand = brandsData[brandId];
+    const brandId = resolvedParams.id;
 
-    if (!brand) {
-        notFound();
+    const [brand, setBrand] = useState<Brand | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchBrand = async () => {
+            try {
+                setLoading(true);
+                const response = await fetch(`/api/brands/${brandId}`);
+
+                if (response.status === 404) {
+                    setError('ブランドが見つかりませんでした');
+                    return;
+                }
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch brand');
+                }
+
+                const data = await response.json();
+                setBrand(data.brand);
+            } catch (err) {
+                console.error('Error fetching brand:', err);
+                setError('ブランドデータの取得に失敗しました');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchBrand();
+    }, [brandId]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-white">
+                <Header />
+                <div className="pt-32 pb-20 text-center">
+                    <p className="text-gray-500 text-lg">読み込み中...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (error || !brand) {
+        return (
+            <div className="min-h-screen bg-white">
+                <Header />
+                <div className="pt-32 pb-20 text-center">
+                    <p className="text-red-500 text-lg mb-8">{error || 'ブランドが見つかりませんでした'}</p>
+                    <Link
+                        href="/dabot/brands"
+                        className="inline-flex items-center gap-2 text-sm font-medium hover:opacity-70 transition-opacity"
+                    >
+                        ブランド一覧に戻る
+                    </Link>
+                </div>
+            </div>
+        );
     }
 
     return (
         <div className="min-h-screen bg-white">
-            {/* Header */}
-            <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
-                <div className="container mx-auto px-6 py-6">
-                    <div className="flex items-center justify-between">
-                        {/* Logo */}
-                        <a href="/dabot" className="text-4xl font-black italic tracking-tight hover:opacity-70 transition-opacity">
-                            DABOT
-                        </a>
-
-                        {/* Navigation */}
-                        <nav className="flex items-center gap-8">
-                            <a href="/dabot" className="text-sm font-medium hover:opacity-70 transition-opacity">
-                                ホーム
-                            </a>
-                            <a href="/dabot/stores" className="text-sm font-medium hover:opacity-70 transition-opacity">
-                                店舗一覧
-                            </a>
-                            <Link href="/dabot/brands" className="text-sm font-medium hover:opacity-70 transition-opacity">
-                                ブランド一覧
-                            </Link>
-                            <a href="/dabot/stores/new" className="text-sm font-medium hover:opacity-70 transition-opacity">
-                                店舗登録はこちら
-                            </a>
-                        </nav>
-                    </div>
-                </div>
-            </header>
+            <Header />
 
             {/* Main Content */}
             <main className="pt-32 pb-20">
@@ -142,14 +90,11 @@ export default function BrandDetailPage({ params }: { params: Promise<{ id: stri
 
                     {/* Hero Section */}
                     <div className="grid md:grid-cols-2 gap-12 mb-20">
-                        {/* Brand Image */}
-                        <div className="relative aspect-square overflow-hidden bg-gray-100">
-                            <div
-                                className="absolute inset-0 bg-cover bg-center"
-                                style={{
-                                    backgroundImage: `url(${brand.image})`,
-                                }}
-                            />
+                        {/* Brand Visual */}
+                        <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-slate-900 to-slate-700 flex items-center justify-center">
+                            <span className="text-white text-6xl font-black italic tracking-tight text-center px-4">
+                                {brand.name}
+                            </span>
                         </div>
 
                         {/* Brand Info */}
@@ -157,25 +102,29 @@ export default function BrandDetailPage({ params }: { params: Promise<{ id: stri
                             <h1 className="text-6xl font-black italic tracking-tight mb-4">
                                 {brand.name}
                             </h1>
-                            <p className="text-xl text-gray-600 mb-8">{brand.nameJa}</p>
-                            <p className="text-lg text-gray-700 leading-relaxed mb-8">
-                                {brand.longDescription}
-                            </p>
+                            {brand.name_kana && (
+                                <p className="text-xl text-gray-600 mb-8">{brand.name_kana}</p>
+                            )}
+                            {brand.description && (
+                                <p className="text-lg text-gray-700 leading-relaxed mb-8">
+                                    {brand.description}
+                                </p>
+                            )}
 
                             {/* Brand Details */}
                             <div className="space-y-4 border-t border-gray-200 pt-8">
-                                <div className="flex items-center gap-4">
-                                    <span className="text-sm font-medium text-gray-500 w-24">設立年</span>
-                                    <span className="text-base font-medium">{brand.established}</span>
-                                </div>
-                                <div className="flex items-center gap-4">
-                                    <span className="text-sm font-medium text-gray-500 w-24">発祥地</span>
-                                    <span className="text-base font-medium">{brand.origin}</span>
-                                </div>
-                                <div className="flex items-center gap-4">
-                                    <span className="text-sm font-medium text-gray-500 w-24">カテゴリー</span>
-                                    <span className="text-base font-medium">{brand.category}</span>
-                                </div>
+                                {brand.found_year && (
+                                    <div className="flex items-center gap-4">
+                                        <span className="text-sm font-medium text-gray-500 w-24">設立年</span>
+                                        <span className="text-base font-medium">{brand.found_year}</span>
+                                    </div>
+                                )}
+                                {brand.birth_place && (
+                                    <div className="flex items-center gap-4">
+                                        <span className="text-sm font-medium text-gray-500 w-24">発祥地</span>
+                                        <span className="text-base font-medium">{brand.birth_place}</span>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

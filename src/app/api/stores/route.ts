@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     // バリデーション
-    const requiredFields = ['name', 'address', 'area', 'lat', 'long', 'brand_number'];
+    const requiredFields = ['name', 'address', 'area', 'brand_number'];
     for (const field of requiredFields) {
       if (body[field] === undefined || body[field] === null || body[field] === '') {
         return NextResponse.json(
@@ -57,8 +57,6 @@ export async function POST(request: NextRequest) {
       name: body.name,
       address: body.address,
       area: body.area,
-      lat: parseFloat(body.lat),
-      long: parseFloat(body.long),
       is_open_now: body.is_open_now ?? true,
       phone_number: body.phone_number || null,
       brand_number: parseInt(body.brand_number, 10),

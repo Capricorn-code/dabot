@@ -142,12 +142,11 @@ export default function BrandsPage() {
                                 >
                                     <div className="flex items-center gap-6 p-6 bg-gradient-to-r from-white to-gray-50 border-2 border-gray-200 hover:border-gray-400 hover:shadow-xl transition-all duration-500">
                                         {/* Brand Icon/Text */}
-                                        <div className={`relative w-32 h-32 flex-shrink-0 bg-gradient-to-br ${
-                                            index % 4 === 0 ? 'from-slate-900 to-slate-700' :
-                                            index % 4 === 1 ? 'from-zinc-900 to-zinc-700' :
-                                            index % 4 === 2 ? 'from-neutral-900 to-neutral-700' :
-                                            'from-gray-900 to-gray-700'
-                                        } flex items-center justify-center group-hover:scale-105 transition-transform duration-500 border border-gray-800`}>
+                                        <div className={`relative w-32 h-32 flex-shrink-0 bg-gradient-to-br ${index % 4 === 0 ? 'from-slate-900 to-slate-700' :
+                                                index % 4 === 1 ? 'from-zinc-900 to-zinc-700' :
+                                                    index % 4 === 2 ? 'from-neutral-900 to-neutral-700' :
+                                                        'from-gray-900 to-gray-700'
+                                            } flex items-center justify-center group-hover:scale-105 transition-transform duration-500 border border-gray-800`}>
                                             <span className="text-white text-2xl font-black italic tracking-tight text-center px-2 break-words">
                                                 {brand.name}
                                             </span>

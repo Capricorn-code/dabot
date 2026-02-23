@@ -4,16 +4,19 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/components/Header';
+import type { Schema } from '@/amplify/data/resource';
 
+type Store = Schema['Stores']['type'];
+
+// フォーム入力用の型 (Storeスキーマを参照)
+// 数値フィールドはフォーム入力中はstringで管理し、送信時に変換
 type StoreFormData = {
-    name: string;
-    address: string;
-    area: string;
-    lat: string;
-    long: string;
-    is_open_now: boolean;
+    name: Store['name'];
+    address: Store['address'];
+    area: Store['area'];
+    is_open_now: NonNullable<Store['is_open_now']>;
     phone_number: string;
-    brand_number: string;
+    brand_number: string; // Store['brand_number'] は number だがフォーム入力はstring
     display_brand_ids: string[];
     description: string;
     site_url: string;
@@ -24,8 +27,6 @@ const initialFormData: StoreFormData = {
     name: '',
     address: '',
     area: '',
-    lat: '',
-    long: '',
     is_open_now: true,
     phone_number: '',
     brand_number: '0',
@@ -85,8 +86,6 @@ export default function NewStorePage() {
                     name: formData.name,
                     address: formData.address,
                     area: formData.area,
-                    lat: parseFloat(formData.lat),
-                    long: parseFloat(formData.long),
                     is_open_now: formData.is_open_now,
                     phone_number: formData.phone_number || null,
                     brand_number: parseInt(formData.brand_number, 10),
@@ -225,42 +224,6 @@ export default function NewStorePage() {
                                     placeholder="例: 東京都渋谷区神宮前1-2-3"
                                 />
                             </div>
-
-                            {/* 緯度・経度 */}
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label htmlFor="lat" className="block text-sm font-medium text-gray-700 mb-2">
-                                        緯度 <span className="text-red-500">*</span>
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="lat"
-                                        name="lat"
-                                        required
-                                        step="any"
-                                        value={formData.lat}
-                                        onChange={handleChange}
-                                        className="w-full px-4 py-3 border-2 border-gray-300 focus:outline-none focus:border-black transition-colors"
-                                        placeholder="例: 35.6762"
-                                    />
-                                </div>
-                                <div>
-                                    <label htmlFor="long" className="block text-sm font-medium text-gray-700 mb-2">
-                                        経度 <span className="text-red-500">*</span>
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="long"
-                                        name="long"
-                                        required
-                                        step="any"
-                                        value={formData.long}
-                                        onChange={handleChange}
-                                        className="w-full px-4 py-3 border-2 border-gray-300 focus:outline-none focus:border-black transition-colors"
-                                        placeholder="例: 139.6503"
-                                    />
-                                </div>
-                            </div>
                         </div>
 
                         {/* 連絡先セクション */}
@@ -363,9 +326,8 @@ export default function NewStorePage() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className={`flex-1 px-8 py-4 bg-black text-white font-medium transition-colors ${
-                                    loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-800'
-                                }`}
+                                className={`flex-1 px-8 py-4 bg-black text-white font-medium transition-colors ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-800'
+                                    }`}
                             >
                                 {loading ? '登録中...' : '店舗を登録する'}
                             </button>

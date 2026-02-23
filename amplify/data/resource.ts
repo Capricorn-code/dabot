@@ -6,8 +6,6 @@ const schema = a.schema({
       name: a.string().required(),
       address: a.string().required(),
       area: a.string().required(),
-      lat: a.float().required(),
-      long: a.float().required(),
       is_open_now: a.boolean().required(),
       phone_number: a.string(),
       brand_number: a.integer().required(),
@@ -46,6 +44,7 @@ const schema = a.schema({
   Favorites: a
     .model({
       user_id: a.id().required(),
+      // 店舗かブランドを判定するためのフィールド
       target_type: a.string().required(),
       target_id: a.id().required(),
     })

@@ -1,14 +1,10 @@
 import { NextResponse, NextRequest } from 'next/server';
 import { generateServerClientUsingCookies } from '@aws-amplify/adapter-nextjs/data';
-import { createServerRunner } from '@aws-amplify/adapter-nextjs';
-import { getCurrentUser } from 'aws-amplify/auth/server';
 import { cookies } from 'next/headers';
 import outputs from '@/amplify_outputs.json';
 import type { Schema } from '@/amplify/data/resource';
 
 export const dynamic = 'force-dynamic';
-
-const { runWithAmplifyServerContext } = createServerRunner({ config: outputs });
 
 export async function GET() {
   try {
@@ -76,30 +72,23 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const cookieStore = await cookies();
-
-    const user = await runWithAmplifyServerContext({
-      nextServerContext: { cookies: () => cookieStore },
-      operation: (contextSpec) => getCurrentUser(contextSpec),
-    });
-
     const client = generateServerClientUsingCookies<Schema>({
       config: outputs,
       cookies,
     });
 
     const body = await request.json();
-    const { target_type, target_id } = body;
+    const { user_id, target_type, target_id } = body;
 
-    if (!target_type || !target_id) {
+    if (!user_id || !target_type || !target_id) {
       return NextResponse.json(
-        { error: 'target_type and target_id are required' },
+        { error: 'user_id, target_type, target_id are required' },
         { status: 400 }
       );
     }
 
     const { data: favorite, errors } = await client.models.Favorites.create({
-      user_id: user.userId,
+      user_id,
       target_type,
       target_id,
     });

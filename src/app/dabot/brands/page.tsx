@@ -38,7 +38,7 @@ function StarButton({ brandId, favoriteIds, userId }: {
                 const res = await fetch('/api/favorites', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ target_type: 'brand', target_id: brandId }),
+                    body: JSON.stringify({ user_id: userId ?? 'guest', target_type: 'brand', target_id: brandId }),
                 });
                 if (res.ok) setIsFav(true);
             }

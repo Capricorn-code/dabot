@@ -28,8 +28,8 @@ const schema = a.schema({
       found_year: a.integer(),
     })
     .authorization((allow) => [
-      allow.guest().to(['read']),
-      allow.authenticated().to(['read', 'create']),
+      allow.guest().to(['read', 'create']),
+      allow.authenticated(),
     ]),
   StoreBrand: a
     .model({

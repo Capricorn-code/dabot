@@ -16,7 +16,7 @@ const schema = a.schema({
       business_hours: a.string(),
     })
     .authorization((allow) => [
-      allow.guest().to(['read', 'create']),
+      allow.guest().to(['read']),
       allow.authenticated(),
     ]),
   Brands: a
@@ -28,7 +28,7 @@ const schema = a.schema({
       found_year: a.integer(),
     })
     .authorization((allow) => [
-      allow.guest().to(['read', 'create']),
+      allow.guest().to(['read']),
       allow.authenticated(),
     ]),
   StoreBrand: a

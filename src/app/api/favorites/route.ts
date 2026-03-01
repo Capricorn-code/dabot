@@ -13,7 +13,9 @@ export async function GET() {
       cookies,
     });
 
-    const { data: favorites, errors } = await client.models.Favorites.list();
+    const { data: favorites, errors } = await client.models.Favorites.list({
+      authMode: 'userPool',
+    });
 
     if (errors) {
       console.error('Error fetching favorites:', errors);
@@ -32,7 +34,7 @@ export async function GET() {
 
     const storeResults = await Promise.all(
       storeFavorites.map(async (fav) => {
-        const { data: store } = await client.models.Stores.get({ id: fav.target_id });
+        const { data: store } = await client.models.Stores.get({ id: fav.target_id }, { authMode: 'identityPool' });
         if (!store) return null;
         return {
           favoriteKey: { user_id: fav.user_id, target_type: fav.target_type, target_id: fav.target_id },
@@ -46,7 +48,7 @@ export async function GET() {
 
     const brandResults = await Promise.all(
       brandFavorites.map(async (fav) => {
-        const { data: brand } = await client.models.Brands.get({ id: fav.target_id });
+        const { data: brand } = await client.models.Brands.get({ id: fav.target_id }, { authMode: 'identityPool' });
         if (!brand) return null;
         return {
           favoriteKey: { user_id: fav.user_id, target_type: fav.target_type, target_id: fav.target_id },
@@ -91,6 +93,8 @@ export async function POST(request: NextRequest) {
       user_id,
       target_type,
       target_id,
+    }, {
+      authMode: 'userPool',
     });
 
     if (errors) {
@@ -132,6 +136,8 @@ export async function DELETE(request: NextRequest) {
       user_id,
       target_type,
       target_id,
+    }, {
+      authMode: 'userPool',
     });
 
     if (errors) {

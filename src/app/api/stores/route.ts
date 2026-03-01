@@ -13,7 +13,9 @@ export async function GET() {
       cookies,
     });
 
-    const { data: stores, errors } = await client.models.Stores.list();
+    const { data: stores, errors } = await client.models.Stores.list({
+      authMode: 'identityPool',
+    });
 
     if (errors) {
       console.error('Error fetching stores:', errors);
@@ -65,6 +67,8 @@ export async function POST(request: NextRequest) {
       description: body.description || null,
       site_url: body.site_url || null,
       business_hours: body.business_hours || null,
+    }, {
+      authMode: 'userPool',
     });
 
     if (errors) {

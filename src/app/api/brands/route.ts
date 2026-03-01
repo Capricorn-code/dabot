@@ -13,7 +13,9 @@ export async function GET() {
       cookies,
     });
 
-    const { data: brands, errors } = await client.models.Brands.list();
+    const { data: brands, errors } = await client.models.Brands.list({
+      authMode: 'identityPool',
+    });
 
     if (errors) {
       console.error('Error fetching brands:', errors);
@@ -56,6 +58,8 @@ export async function POST(request: NextRequest) {
       description: body.description?.trim() || null,
       birth_place: body.birth_place?.trim() || null,
       found_year: body.found_year ? parseInt(body.found_year, 10) : null,
+    }, {
+      authMode: 'userPool',
     });
 
     if (errors) {

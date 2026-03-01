@@ -17,7 +17,9 @@ export async function GET(
       cookies,
     });
 
-    const { data: store, errors } = await client.models.Stores.get({ id });
+    const { data: store, errors } = await client.models.Stores.get({ id }, {
+      authMode: 'identityPool',
+    });
 
     if (errors) {
       console.error('Error fetching store:', errors);

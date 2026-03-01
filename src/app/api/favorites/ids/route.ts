@@ -33,7 +33,9 @@ export async function GET() {
       cookies,
     });
 
-    const { data: favorites, errors } = await client.models.Favorites.list();
+    const { data: favorites, errors } = await client.models.Favorites.list({
+      authMode: 'userPool',
+    });
 
     if (errors || !favorites) {
       return NextResponse.json({ storeIds: [], brandIds: [], userId });

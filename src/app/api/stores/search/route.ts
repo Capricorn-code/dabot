@@ -24,7 +24,9 @@ export async function POST(request: Request) {
     });
 
     // ベースクエリ: すべての店舗を取得
-    const { data: stores, errors } = await client.models.Stores.list();
+    const { data: stores, errors } = await client.models.Stores.list({
+      authMode: 'identityPool',
+    });
 
     if (errors) {
       console.error('Error fetching stores:', errors);

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/components/Header';
+import { useAuth } from '@/components/AuthProvider';
 import type { Schema } from '@/amplify/data/resource';
 
 type Store = Schema['Stores']['type'];
@@ -53,10 +54,24 @@ const areaOptions = [
 
 export default function NewStorePage() {
     const router = useRouter();
+    const { user, loading: authLoading } = useAuth();
     const [formData, setFormData] = useState<StoreFormData>(initialFormData);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
+
+    if (authLoading) {
+        return (
+            <div className="min-h-screen bg-white flex items-center justify-center">
+                <div className="w-8 h-8 border-2 border-black border-t-transparent rounded-full animate-spin" />
+            </div>
+        );
+    }
+
+    if (!user) {
+        router.replace('/dabot/login');
+        return null;
+    }
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>

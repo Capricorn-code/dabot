@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Header } from '@/components/Header';
+import { useAuth } from '@/components/AuthProvider';
 
 type FavoriteKey = {
     user_id: string;
@@ -26,10 +28,25 @@ type FavoriteBrand = {
 };
 
 export default function MyPage() {
+    const router = useRouter();
+    const { user, loading: authLoading } = useAuth();
     const [favoriteStores, setFavoriteStores] = useState<FavoriteStore[]>([]);
     const [favoriteBrands, setFavoriteBrands] = useState<FavoriteBrand[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
+    if (authLoading) {
+        return (
+            <div className="min-h-screen bg-white flex items-center justify-center">
+                <div className="w-8 h-8 border-2 border-black border-t-transparent rounded-full animate-spin" />
+            </div>
+        );
+    }
+
+    if (!user) {
+        router.replace('/dabot/login');
+        return null;
+    }
 
     const fetchFavorites = async () => {
         try {

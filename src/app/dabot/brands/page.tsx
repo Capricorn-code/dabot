@@ -2,7 +2,9 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Header } from '@/components/Header';
+import { useAuth } from '@/components/AuthProvider';
 import type { Schema } from '@/amplify/data/resource';
 
 type Brand = Schema['Brands']['type'];
@@ -14,6 +16,8 @@ function StarButton({ brandId, favoriteIds, userId }: {
     favoriteIds: Set<string>;
     userId: string | null;
 }) {
+    const router = useRouter();
+    const { user } = useAuth();
     const [isFav, setIsFav] = useState(favoriteIds.has(brandId));
     const [loading, setLoading] = useState(false);
 
@@ -24,6 +28,10 @@ function StarButton({ brandId, favoriteIds, userId }: {
     const toggle = async (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
+        if (!user) {
+            router.push('/dabot/login');
+            return;
+        }
         if (loading) return;
         setLoading(true);
         try {
@@ -38,7 +46,7 @@ function StarButton({ brandId, favoriteIds, userId }: {
                 const res = await fetch('/api/favorites', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_id: userId ?? 'guest', target_type: 'brand', target_id: brandId }),
+                    body: JSON.stringify({ user_id: user.userId, target_type: 'brand', target_id: brandId }),
                 });
                 if (res.ok) setIsFav(true);
             }

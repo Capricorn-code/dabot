@@ -2,24 +2,32 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-
-const navItems = [
-    { href: '/dabot', label: 'ホーム' },
-    { href: '/dabot/stores', label: '店舗一覧', exactMatch: true },
-    { href: '/dabot/brands', label: 'ブランド一覧' },
-    { href: '/dabot/stores/new', label: '店舗登録はこちら' },
-    { href: '/dabot/mypage', label: 'マイページ' },
-];
+import { usePathname, useRouter } from 'next/navigation';
+import { useAuth } from '@/components/AuthProvider';
 
 export function Header() {
     const pathname = usePathname();
+    const router = useRouter();
+    const { user, loading, signOut } = useAuth();
     const [menuOpen, setMenuOpen] = useState(false);
 
-    const isActive = (item: typeof navItems[number]) => {
+    const baseNavItems = [
+        { href: '/dabot', label: 'ホーム' },
+        { href: '/dabot/stores', label: '店舗一覧', exactMatch: true },
+        { href: '/dabot/brands', label: 'ブランド一覧' },
+        { href: '/dabot/stores/new', label: '店舗登録はこちら' },
+    ];
+
+    const isActive = (item: { href: string; exactMatch?: boolean }) => {
         if (item.href === '/dabot') return pathname === '/dabot';
         if (item.exactMatch) return pathname === item.href;
         return pathname.startsWith(item.href);
+    };
+
+    const handleSignOut = async () => {
+        setMenuOpen(false);
+        await signOut();
+        router.push('/dabot');
     };
 
     return (
@@ -37,9 +45,9 @@ export function Header() {
 
                         {/* Desktop nav */}
                         <nav className="hidden md:flex items-center gap-8">
-                            {navItems.map((item) => (
+                            {baseNavItems.map((item) => (
                                 <Link
-                                    key={item.href}
+                                    key={item.href + item.label}
                                     href={item.href}
                                     className={
                                         isActive(item)
@@ -50,6 +58,39 @@ export function Header() {
                                     {item.label}
                                 </Link>
                             ))}
+                            {!loading && user && (
+                                <Link
+                                    href="/dabot/mypage"
+                                    className={
+                                        pathname.startsWith('/dabot/mypage')
+                                            ? 'text-sm font-medium border-b-2 border-black'
+                                            : 'text-sm font-medium hover:opacity-70 transition-opacity'
+                                    }
+                                >
+                                    マイページ
+                                </Link>
+                            )}
+                            {!loading && (
+                                user ? (
+                                    <button
+                                        onClick={handleSignOut}
+                                        className="text-sm font-medium hover:opacity-70 transition-opacity"
+                                    >
+                                        ログアウト
+                                    </button>
+                                ) : (
+                                    <Link
+                                        href="/dabot/login"
+                                        className={
+                                            pathname.startsWith('/dabot/login')
+                                                ? 'text-sm font-medium border-b-2 border-black'
+                                                : 'text-sm font-medium hover:opacity-70 transition-opacity'
+                                        }
+                                    >
+                                        ログイン
+                                    </Link>
+                                )
+                            )}
                         </nav>
 
                         {/* Hamburger button (mobile only) */}
@@ -85,9 +126,9 @@ export function Header() {
                 }`}
             >
                 <nav className="flex flex-col px-10 gap-8 pt-24">
-                    {navItems.map((item) => (
+                    {baseNavItems.map((item) => (
                         <Link
-                            key={item.href}
+                            key={item.href + item.label}
                             href={item.href}
                             onClick={() => setMenuOpen(false)}
                             className={`text-2xl font-black italic tracking-tight transition-opacity ${
@@ -99,6 +140,41 @@ export function Header() {
                             {item.label}
                         </Link>
                     ))}
+                    {!loading && user && (
+                        <Link
+                            href="/dabot/mypage"
+                            onClick={() => setMenuOpen(false)}
+                            className={`text-2xl font-black italic tracking-tight transition-opacity ${
+                                pathname.startsWith('/dabot/mypage')
+                                    ? 'text-black border-b-2 border-black pb-1 w-fit'
+                                    : 'text-gray-400 hover:text-black'
+                            }`}
+                        >
+                            マイページ
+                        </Link>
+                    )}
+                    {!loading && (
+                        user ? (
+                            <button
+                                onClick={handleSignOut}
+                                className="text-2xl font-black italic tracking-tight text-gray-400 hover:text-black transition-opacity text-left"
+                            >
+                                ログアウト
+                            </button>
+                        ) : (
+                            <Link
+                                href="/dabot/login"
+                                onClick={() => setMenuOpen(false)}
+                                className={`text-2xl font-black italic tracking-tight transition-opacity ${
+                                    pathname.startsWith('/dabot/login')
+                                        ? 'text-black border-b-2 border-black pb-1 w-fit'
+                                        : 'text-gray-400 hover:text-black'
+                                }`}
+                            >
+                                ログイン
+                            </Link>
+                        )
+                    )}
                 </nav>
             </div>
         </>

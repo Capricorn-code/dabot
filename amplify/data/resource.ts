@@ -17,7 +17,7 @@ const schema = a.schema({
     })
     .authorization((allow) => [
       allow.guest().to(['read']),
-      allow.authenticated(),
+      allow.authenticated('identityPool'),
     ]),
   Brands: a
     .model({
@@ -29,7 +29,7 @@ const schema = a.schema({
     })
     .authorization((allow) => [
       allow.guest().to(['read']),
-      allow.authenticated(),
+      allow.authenticated('identityPool'),
     ]),
   StoreBrand: a
     .model({
@@ -39,7 +39,7 @@ const schema = a.schema({
     .identifier(['store_id', 'brand_id'])
     .authorization((allow) => [
       allow.guest().to(['read']),
-      allow.authenticated(),
+      allow.authenticated('identityPool'),
     ]),
   Favorites: a
     .model({
@@ -51,7 +51,7 @@ const schema = a.schema({
     .identifier(['user_id', 'target_type', 'target_id'])
     .authorization((allow) => [
       allow.owner(),
-      allow.authenticated(),
+      allow.authenticated('identityPool'),
     ]),
 });
 

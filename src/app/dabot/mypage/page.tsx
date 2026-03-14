@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
 import { useAuth } from '@/components/AuthProvider';
 
 type FavoriteKey = {
@@ -202,6 +203,8 @@ export default function MyPage() {
                     )}
                 </div>
             </main>
+
+            <Footer />
         </div>
     );
 }

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
 import { useAuth } from '@/components/AuthProvider';
 
 type BrandFormData = {
@@ -236,6 +237,8 @@ export default function NewBrandPage() {
                     </form>
                 </div>
             </main>
+
+            <Footer />
         </div>
     );
 }

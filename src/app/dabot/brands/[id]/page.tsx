@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { use } from 'react';
 import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
 import type { Schema } from '@/amplify/data/resource';
 
 type Brand = Schema['Brands']['type'];
@@ -178,6 +179,8 @@ export default function BrandDetailPage({ params }: { params: Promise<{ id: stri
                     </div>
                 </div>
             </main>
+
+            <Footer />
         </div>
     );
 }

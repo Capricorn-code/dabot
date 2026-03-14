@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signIn, signUp, confirmSignUp } from 'aws-amplify/auth';
 import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
 import { useAuth } from '@/components/AuthProvider';
 
 type AuthStep = 'signIn' | 'signUp' | 'confirmSignUp';
@@ -236,6 +237,8 @@ export default function LoginPage() {
                     )}
                 </div>
             </main>
+
+            <Footer />
         </div>
     );
 }

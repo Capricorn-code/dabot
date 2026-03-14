@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
 import { useAuth } from '@/components/AuthProvider';
 import type { Schema } from '@/amplify/data/resource';
 
@@ -262,6 +263,8 @@ export default function BrandsPage() {
                     )}
                 </div>
             </main>
+
+            <Footer />
 
             <style jsx>{`
                 @keyframes fadeIn {

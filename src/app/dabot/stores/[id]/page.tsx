@@ -4,35 +4,52 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { use } from 'react';
 import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
+import { useAuth } from '@/components/AuthProvider';
 import type { Schema } from '@/amplify/data/resource';
 
 type Store = Schema['Stores']['type'];
+type Brand = Schema['Brands']['type'];
 
 export default function StoreDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const resolvedParams = use(params);
     const storeId = resolvedParams.id;
 
     const [store, setStore] = useState<Store | null>(null);
+    const [brandMap, setBrandMap] = useState<Map<string, string>>(new Map());
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const { user } = useAuth();
 
     useEffect(() => {
         const fetchStore = async () => {
             try {
                 setLoading(true);
-                const response = await fetch(`/api/stores/${storeId}`);
+                const [storeRes, brandsRes] = await Promise.all([
+                    fetch(`/api/stores/${storeId}`),
+                    fetch('/api/brands'),
+                ]);
 
-                if (response.status === 404) {
+                if (storeRes.status === 404) {
                     setError('店舗が見つかりませんでした');
                     return;
                 }
 
-                if (!response.ok) {
+                if (!storeRes.ok) {
                     throw new Error('Failed to fetch store');
                 }
 
-                const data = await response.json();
+                const data = await storeRes.json();
                 setStore(data.store);
+
+                if (brandsRes.ok) {
+                    const brandsData = await brandsRes.json();
+                    const map = new Map<string, string>();
+                    (brandsData.brands || []).forEach((b: Brand) => {
+                        map.set(b.id, b.name);
+                    });
+                    setBrandMap(map);
+                }
             } catch (err) {
                 console.error('Error fetching store:', err);
                 setError('店舗データの取得に失敗しました');
@@ -104,6 +121,14 @@ export default function StoreDetailPage({ params }: { params: Promise<{ id: stri
                             )}
                         </div>
                         <p className="text-gray-500 text-sm">{store.area}</p>
+                        {user && (
+                            <Link
+                                href={`/dabot/stores/${storeId}/edit`}
+                                className="inline-flex items-center gap-2 mt-4 px-4 py-2 border-2 border-black text-sm font-medium hover:bg-black hover:text-white transition-colors"
+                            >
+                                編集する
+                            </Link>
+                        )}
                     </div>
 
                     {/* Main Info Grid */}
@@ -170,14 +195,28 @@ export default function StoreDetailPage({ params }: { params: Promise<{ id: stri
                         <div className="space-y-6">
                             <div className="border-2 border-gray-200 p-8">
                                 <h2 className="text-xs font-medium text-gray-500 tracking-widest uppercase mb-6">
-                                    取扱ブランド
+                                    取扱ブランド ({store.brand_number})
                                 </h2>
-                                <div className="text-center">
-                                    <p className="text-7xl font-black italic tracking-tight mb-2">
-                                        {store.brand_number}
-                                    </p>
-                                    <p className="text-sm text-gray-500">ブランド取扱中</p>
-                                </div>
+                                {store.display_brand_ids && store.display_brand_ids.length > 0 ? (
+                                    <div className="flex flex-wrap gap-2">
+                                        {store.display_brand_ids.map((brandId) => {
+                                            const brandName = brandMap.get(brandId ?? '');
+                                            if (!brandName) return null;
+                                            return (
+                                                <span key={brandId} className="inline-block px-3 py-2 bg-black text-white text-sm font-medium">
+                                                    {brandName}
+                                                </span>
+                                            );
+                                        })}
+                                    </div>
+                                ) : (
+                                    <div className="text-center">
+                                        <p className="text-7xl font-black italic tracking-tight mb-2">
+                                            {store.brand_number}
+                                        </p>
+                                        <p className="text-sm text-gray-500">ブランド取扱中</p>
+                                    </div>
+                                )}
                             </div>
 
                             {store.review_count !== null && store.review_count !== undefined && (
@@ -222,6 +261,8 @@ export default function StoreDetailPage({ params }: { params: Promise<{ id: stri
                     </div>
                 </div>
             </main>
+
+            <Footer />
         </div>
     );
 }

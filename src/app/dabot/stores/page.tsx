@@ -4,10 +4,12 @@ import { useState, useMemo, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
 import { useAuth } from '@/components/AuthProvider';
 import type { Schema } from '@/amplify/data/resource';
 
 type Store = Schema['Stores']['type'];
+type Brand = Schema['Brands']['type'];
 
 type SortOption = 'name-asc' | 'name-desc' | 'area' | 'brands-desc' | 'review-desc';
 
@@ -90,6 +92,7 @@ function StoresPageContent() {
     const keywordParam = searchParams.get('keyword') || '';
 
     const [stores, setStores] = useState<Store[]>([]);
+    const [brandMap, setBrandMap] = useState<Map<string, string>>(new Map());
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [sortOption, setSortOption] = useState<SortOption>('name-asc');
@@ -102,10 +105,22 @@ function StoresPageContent() {
         const fetchStores = async () => {
             try {
                 setLoading(true);
-                const response = await fetch('/api/stores');
-                if (!response.ok) throw new Error('Failed to fetch stores');
-                const data = await response.json();
-                setStores(data.stores || []);
+                const [storesRes, brandsRes] = await Promise.all([
+                    fetch('/api/stores'),
+                    fetch('/api/brands'),
+                ]);
+                if (!storesRes.ok) throw new Error('Failed to fetch stores');
+                const storesData = await storesRes.json();
+                setStores(storesData.stores || []);
+
+                if (brandsRes.ok) {
+                    const brandsData = await brandsRes.json();
+                    const map = new Map<string, string>();
+                    (brandsData.brands || []).forEach((b: Brand) => {
+                        map.set(b.id, b.name);
+                    });
+                    setBrandMap(map);
+                }
             } catch (err) {
                 console.error('Error fetching stores:', err);
                 setError('店舗データの取得に失敗しました');
@@ -327,10 +342,22 @@ function StoresPageContent() {
                                                     </div>
                                                 </div>
 
-                                                <div className="flex items-center gap-2 ml-4">
-                                                    <span className="inline-block px-3 py-1 bg-black text-white text-xs font-medium">
-                                                        {store.brand_number}ブランド
-                                                    </span>
+                                                <div className="flex flex-wrap items-center gap-1 ml-4">
+                                                    {store.display_brand_ids && store.display_brand_ids.length > 0 ? (
+                                                        store.display_brand_ids.map((brandId) => {
+                                                            const brandName = brandMap.get(brandId ?? '');
+                                                            if (!brandName) return null;
+                                                            return (
+                                                                <span key={brandId} className="inline-block px-2 py-1 bg-black text-white text-xs font-medium">
+                                                                    {brandName}
+                                                                </span>
+                                                            );
+                                                        })
+                                                    ) : (
+                                                        <span className="inline-block px-3 py-1 bg-black text-white text-xs font-medium">
+                                                            {store.brand_number}ブランド
+                                                        </span>
+                                                    )}
                                                 </div>
                                             </div>
 
@@ -404,6 +431,8 @@ function StoresPageContent() {
                     )}
                 </div>
             </main>
+
+            <Footer />
 
             <style jsx>{`
                 @keyframes fadeIn {

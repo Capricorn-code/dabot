@@ -301,7 +301,7 @@ function StoresPageContent() {
 
                     {/* Store List */}
                     {!loading && !error && (
-                        <div className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {filteredAndSortedStores.map((store, index) => (
                                 <div
                                     key={store.id}
@@ -309,75 +309,65 @@ function StoresPageContent() {
                                     style={{ animation: `fadeIn 0.5s ease-out ${index * 0.05}s both` }}
                                 >
                                     <Link href={`/dabot/stores/${store.id}`} className="group block">
-                                        <div className="relative p-6 bg-gradient-to-r from-white to-gray-50 border-2 border-gray-200 hover:border-gray-400 hover:shadow-xl transition-all duration-500">
-                                            {/* Store Header */}
-                                            <div className="flex items-start justify-between mb-4">
-                                                <div className="flex-1">
-                                                    <div className="flex items-baseline gap-3 mb-2">
-                                                        <h2 className="text-3xl font-black italic tracking-tight group-hover:translate-x-2 group-hover:text-gray-900 transition-all duration-300">
-                                                            {store.name}
-                                                        </h2>
-                                                        {store.is_open_now && (
-                                                            <span className="text-xs px-2 py-1 bg-green-100 text-green-700 font-medium rounded">
-                                                                営業中
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                    <div className="flex items-center gap-4 text-sm text-gray-600">
-                                                        <span className="flex items-center gap-1">
-                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                                                                <circle cx="12" cy="10" r="3" />
-                                                            </svg>
-                                                            {store.area}
-                                                        </span>
-                                                        {store.phone_number && (
-                                                            <span className="flex items-center gap-1 text-gray-500">
-                                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                                                                </svg>
-                                                                {store.phone_number}
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                </div>
-
-                                                <div className="flex flex-wrap items-center gap-1 ml-4">
-                                                    {store.display_brand_ids && store.display_brand_ids.length > 0 ? (
-                                                        store.display_brand_ids.map((brandId) => {
-                                                            const brandName = brandMap.get(brandId ?? '');
-                                                            if (!brandName) return null;
-                                                            return (
-                                                                <span key={brandId} className="inline-block px-2 py-1 bg-black text-white text-xs font-medium">
-                                                                    {brandName}
-                                                                </span>
-                                                            );
-                                                        })
-                                                    ) : (
-                                                        <span className="inline-block px-3 py-1 bg-black text-white text-xs font-medium">
-                                                            {store.brand_number}ブランド
-                                                        </span>
-                                                    )}
-                                                </div>
+                                        <div className="relative p-5 bg-white border border-gray-200 border-l-4 border-l-[#CCFF00] shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                                            {/* Area Badge & Status */}
+                                            <div className="flex items-center gap-2 mb-3">
+                                                <span className="bg-black text-white text-xs font-bold px-2 py-0.5">
+                                                    {store.area}
+                                                </span>
+                                                {store.is_open_now && (
+                                                    <span className="text-xs px-2 py-0.5 bg-green-100 text-green-700 font-medium">
+                                                        営業中
+                                                    </span>
+                                                )}
                                             </div>
 
+                                            {/* Store Name */}
+                                            <h2 className="text-2xl font-black italic tracking-tight mb-3 group-hover:translate-x-1 transition-transform duration-300">
+                                                {store.name}
+                                            </h2>
+
+                                            {/* Brand Tags */}
+                                            <div className="flex flex-wrap gap-1 mb-3">
+                                                {store.display_brand_ids && store.display_brand_ids.length > 0 ? (
+                                                    store.display_brand_ids.map((brandId) => {
+                                                        const brandName = brandMap.get(brandId ?? '');
+                                                        if (!brandName) return null;
+                                                        return (
+                                                            <span key={brandId} className="inline-block px-2 py-0.5 bg-gray-900 text-white text-xs font-medium">
+                                                                {brandName}
+                                                            </span>
+                                                        );
+                                                    })
+                                                ) : (
+                                                    <span className="inline-block px-2 py-0.5 bg-gray-900 text-white text-xs font-medium">
+                                                        {store.brand_number}ブランド
+                                                    </span>
+                                                )}
+                                            </div>
+
+                                            {/* Description */}
                                             {store.description && (
-                                                <p className="text-sm text-gray-600 mb-4">
+                                                <p className="text-sm text-gray-600 mb-3 line-clamp-2">
                                                     {store.description}
                                                 </p>
                                             )}
 
-                                            <p className="text-xs text-gray-500 mb-4">
-                                                📍 {store.address}
-                                            </p>
-
-                                            <div className="flex items-center gap-4 text-xs text-gray-500">
+                                            {/* Footer Info */}
+                                            <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500 pt-3 border-t border-gray-100">
+                                                <span className="flex items-center gap-1">
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                                                        <circle cx="12" cy="10" r="3" />
+                                                    </svg>
+                                                    <span className="truncate max-w-40">{store.address}</span>
+                                                </span>
                                                 {store.review_count !== null && store.review_count !== undefined && (
                                                     <span className="flex items-center gap-1">
                                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                                             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
                                                         </svg>
-                                                        {store.review_count} レビュー
+                                                        {store.review_count}
                                                     </span>
                                                 )}
                                                 {store.business_hours && (
@@ -389,28 +379,19 @@ function StoresPageContent() {
                                                         {store.business_hours}
                                                     </span>
                                                 )}
-                                                {store.site_url && (
-                                                    <span className="flex items-center gap-1">
-                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-                                                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-                                                        </svg>
-                                                        サイトあり
-                                                    </span>
-                                                )}
                                             </div>
 
                                             {/* Arrow Icon */}
-                                            <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="transform group-hover:translate-x-2 transition-transform duration-300">
+                                            <div className="absolute bottom-5 right-5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="transform group-hover:translate-x-1 transition-transform duration-300">
                                                     <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                                 </svg>
                                             </div>
                                         </div>
                                     </Link>
 
-                                    {/* Star Button - outside Link to avoid navigation */}
-                                    <div className="absolute bottom-4 right-4">
+                                    {/* Star Button */}
+                                    <div className="absolute top-3 right-3">
                                         <StarButton
                                             storeId={store.id}
                                             favoriteIds={favStoreIds}
